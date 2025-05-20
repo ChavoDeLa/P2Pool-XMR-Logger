@@ -115,7 +115,7 @@ Reminders:
 
 **Why?!?**
 
-  P2Pool data api files miss some stuff that I wanted (uncle positions, share positions, share count, etc) and i wanted the info into JSON format, reported regularly for use in Node-Red.
+  P2Pool data api files miss some stuff that I wanted (uncle positions, share positions, share count, merge mining info, etc) and i wanted the info into JSON format, reported regularly for use in Node-Red.
 
 
 **What about the tari script?!?**
