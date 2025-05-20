@@ -18,7 +18,7 @@ Prerequisites:
   A small suite of bash scripts to extend the available JSON data localed in /p2pool/data/local.
   
     1. launch_p2pool_tmux.sh
-  1. Starts p2pool in a tmux session called "p2pterm".  Update relevant absolute paths, then run.
+  1. Starts p2pool in a tmux session called "p2pterm" with loglevel 1 and API active.  Update relevant absolute paths, then run.
      
     2. payouts.sh
   2. Scrapes the log file (p2pool.log) every 2 minutes for new payouts, append to a structured json file with the last (10) payouts located in the data api folder, keeping payout (0) the latest each time, with debug feedback. uses some code and/or inspiration from https://github.com/OlMi1/p2poolio. Update relevant absolute paths at the top, then run.  
