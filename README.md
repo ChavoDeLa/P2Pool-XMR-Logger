@@ -25,7 +25,7 @@ Example Output of _lastpayout.json_ (actually holds last 10 payouts, one payout 
         }
         ]
   ``` 
-Example Output of _status.json_ :     
+Example Output of _status.json_ (Uncles position will additionally show up when active in the "status" output):     
   ```json
       {
         "timestamp": "2025-05-17 17:25:36.6680",
