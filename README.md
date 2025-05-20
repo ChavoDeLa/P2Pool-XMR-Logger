@@ -2,11 +2,11 @@
 
 Prerequisites:
 
-  -must have tmux installed
-  
-  -running p2pool pre-4.6 and merge mining, or running p2pool 4.6+
-  
-  -can execute bash scripts in your environment
+    -must have tmux installed
+    
+    -running p2pool pre-4.6 and merge mining, or running p2pool 4.6+
+    
+    -can execute bash scripts in your environment
   
 **What?!?**
 
