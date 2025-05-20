@@ -134,9 +134,6 @@ Reminders and how to access the API files remotely:
   - be sure that port 9000 is open on your machine firewall if applicable, or change to another available port
   - python3 must be installed to run the http.server command
 
-        http://local.host.ip.address:9000/stratum
-        http://local.host.ip.address:9000/lastpayout.json
-        http://local.host.ip.address:9000/status.json
 
 **Why?!?**
 
