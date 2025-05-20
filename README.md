@@ -136,7 +136,7 @@ Reminders and how to access the API files remotely:
 **What about the tari script?!?**
 
     tari_loop_execute.sh
-  The tari suite's minotari-node has a memory leak, and will gobble up swap and ram and then either crash Linux, or get killed by the OOM manager at length without notice.  This script simply kills any existing processes, restarts them in new terminals, and loops every 4 hours to dump the process memory and prevent whole system crashes or loss of node connectivity.
+  The tari suite's minotari-node has a memory leak, and will gobble up swap and ram and then either crash Linux, or get killed by the OOM manager at length without notice.  This script simply kills any existing processes, restarts them in new terminals, and loops every 4 hours to dump the process memory and prevent whole system crashes or loss of node connectivity. It restarts and launches the wallet and node to ensure there are no tor hangups.
 
 BUT YOUR CODE SUCKS!
   
