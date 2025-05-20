@@ -1,5 +1,10 @@
 **# P2Pool-XMR-Loggers**
 
+Prerequisites:
+  -must have tmux installed
+  -running p2pool pre-4.6 and merge mining, or running p2pool 4.6+
+  -can execute bash scripts in your environment
+  
 **What?!?**
 
   A small suite of bash scripts to extend the available JSON data localed in /p2pool/data/local.
@@ -105,9 +110,11 @@ Example Output of _status.json_ (Uncles position will additionally show up when 
         }
       }
   ```    
-Reminders:
+Reminders and how to access the API files remotely:
   - be sure to make your .sh files executable in linux
-  - in your P2Pool/data/local folder, in a terminal run " python3 -m http.server 9000" to open up an http server on port 9000, so that you can access files like this:
+  - in your P2Pool/data/local folder, in a terminal run " python3 -m http.server 9000" to open up an http server on port 9000, so that you can access files like shown below
+  - be sure that port 9000 is open on your machine firewall if applicable, or change to another available port
+  - python3 must be installed to run the http.server command
 
         http://local.host.ip.address:9000/stratum
         http://local.host.ip.address:9000/lastpayout.json
