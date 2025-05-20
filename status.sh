@@ -2,15 +2,20 @@
 #this script only works if P2Pool is running in a tmux session called "p2pterm"!!!!
 #this script pulls all data from the last occurence of the word "SideChain" until 6 lines after "MergeMiningClientTari" and should be compatible in most cases with P2pool 4.6 and above, or 4.5 and above if merger mining tari.
 #this script may fail if you are on an older version of P2Pool (pre-4.6) and are not merge mining tari.
-#some fields, such as uncle positions, will pop in and out of the json depending on whether "status" returns anything
+#some fields, such as uncle positions, will pop in and out of the json depending on whether "status" returns anything.
 
 LOG_FILE="/path/to/your/P2Pool/p2pool.log" # edit to match path to your P2Pool install where p2pool.log is located
 OUTPUT_FILE="/path/to/your/P2Pool/data/local/status.json" # edit to match path to your P2Pool local data api folder.
 CLEAN_FILE="/tmp/p2pool_status_block.txt"
 JSON_TMP="/tmp/p2pool_status_parsed.json"
+session_name="p2pterm"
 
 while true; do
   echo "$(date '+%Y-%m-%d %H:%M:%S') Running P2Pool status fetch..."
+
+  # Send "status" command to the tmux session
+  tmux send-keys -t "$session_name" "status" C-m
+  sleep 2  # Give it time to write to the log
 
   # Extract last occurrence of 'SideChain' and collect through 6 lines after 'MergeMiningClientTari'
   start_line=$(grep -n "SideChain status" "$LOG_FILE" | tail -n 1 | cut -d: -f1)
