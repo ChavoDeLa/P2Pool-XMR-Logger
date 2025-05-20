@@ -2,16 +2,16 @@
 
 Prerequisites:
 
-    -must have tmux installed
+ -must have tmux installed
     
-    -running p2pool pre-4.6 and merge mining, or running p2pool 4.6+ WITH LOGLEVEL 1 in either case
+ -running p2pool pre-4.6 and merge mining, or running p2pool 4.6+ WITH LOGLEVEL 1 in either case
     
-    -can execute bash scripts in your environment
+ -can execute bash scripts in your environment
 
-    -for the status logger, you must run p2pool in a tmux terminal with the associated script, or similar 
+   -for the status logger, you must run p2pool in a tmux terminal with the associated script, or similar 
     (so that the "status" command can be sent without intervention, loglevel is 1, and API is active)
 
-    -for the payouts logger, tmux is not necessary
+  -for the payouts logger, tmux is not necessary
   
 **What?!?**
 
@@ -119,8 +119,18 @@ Example Output of _status.json_ (Uncles position will additionally show up when 
       }
   ```    
 Reminders and how to access the API files remotely:
+
   - be sure to make your .sh files executable in linux
-  - in your P2Pool/data/local folder, in a terminal run " python3 -m http.server 9000" to open up an http server on port 9000, so that you can access files like shown below
+  - in your P2Pool/data/local folder, in a terminal run:
+  
+          python3 -m http.server 9000
+  
+    to open up an http server on port 9000, so that you can access files like shown below
+    
+        http://local.host.ip.address:9000/stratum
+        http://local.host.ip.address:9000/lastpayout.json
+        http://local.host.ip.address:9000/status.json
+    
   - be sure that port 9000 is open on your machine firewall if applicable, or change to another available port
   - python3 must be installed to run the http.server command
 
