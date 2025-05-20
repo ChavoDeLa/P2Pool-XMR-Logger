@@ -9,7 +9,7 @@ Prerequisites:
     -can execute bash scripts in your environment
 
     -for the status logger, you must run p2pool in a tmux terminal with the associated script, or similar 
-    (so that the "status" command can be sent without intervention)
+    (so that the "status" command can be sent without intervention, loglevel is 1, and API is active)
 
     -for the payouts logger, tmux is not necessary
   
