@@ -15,8 +15,8 @@ p2poolio() {
     declare -a lines=()
     local payout='{}'
 
-    # Read last 50 lines in reverse order and parse
-    mapfile -t raw_lines < <(tac "$log_path" | head -n 50)
+    # Read last 20 lines in reverse order and parse
+    mapfile -t raw_lines < <(tac "$log_path" | head -n 20)
 
     for line in "${raw_lines[@]}"; do
         line="${line//$'\n'/}" # remove newlines just in case
