@@ -4,21 +4,24 @@ What?!?
 
   A small suite of bash scripts to extend the available JSON data localed in /p2pool/data/local.
   
-    1. Start p2pool in a tmux session called "p2pterm" ( see: launch_p2pool_tmux.sh)
-       
-    2. Scrape the log file (p2pool.log) every 2 minutes for new payouts, append to a structured json file with the last (10) payouts located in the data api folder, keeping payout (0) the latest each time, with debug feedback. (see: payouts.sh)
-       
-    3. Send "status" to the p2pool session to push outputs to the log, then scrape p2pool.log for the entire output of the "status" command every 5 minutes, structure into json, then save into a json file for further use located in the data api folder, with debug feedback. (see: status.sh)
+    launch_p2pool_tmux.sh
+  1. Starts p2pool in a tmux session called "p2pterm"
+     
+    payouts.sh
+  2. Scrapes the log file (p2pool.log) every 2 minutes for new payouts, append to a structured json file with the last (10) payouts located in the data api folder, keeping payout (0) the latest each time, with debug feedback. uses some code and/or inspiration from https://github.com/OlMi1/p2poolio
+
+    status.sh  
+  3. Sends "status" to the p2pool session to push outputs to the log, then scrape p2pool.log for the entire output of the "status" command every 5 minutes, structure into json, then save into a json file for further use located in the data api folder, with debug feedback.  
 
 Why?!?
 
-    P2Pool data api files miss some stuff that I wanted (uncle positions, share positions, share count, etc) and i wanted the info into JSON format, reported regularly for use in Node-Red.
+  P2Pool data api files miss some stuff that I wanted (uncle positions, share positions, share count, etc) and i wanted the info into JSON format, reported regularly for use in Node-Red.
 
 
 What about the tari script?!?
 
-    The tari suite's minotari-node has a memory leak, and will gobble up swap and ram and then either crash Linux, or get killed by the OOM manager at length without notice.  This script simply kills any existing processes, restarts them in new terminals, and loops every 4 hours to dump the process memory and prevent whole system crashes or loss of node connectivity.
+  The tari suite's minotari-node has a memory leak, and will gobble up swap and ram and then either crash Linux, or get killed by the OOM manager at length without notice.  This script simply kills any existing processes, restarts them in new terminals, and loops every 4 hours to dump the process memory and prevent whole system crashes or loss of node connectivity.
 
 BUT YOUR CODE SUCKS!
   
-    Yes, feel free to improve it. I write spaghetti code exclusively and it is never efficient or pretty. There is some GPT intervention here as well.
+  Yes, feel free to improve it. I write spaghetti code exclusively and it is never efficient or pretty. There is some GPT intervention here as well.
