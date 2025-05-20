@@ -1,83 +1,65 @@
 #!/bin/bash
 
-file="/path/to/your/P2Pool/data/local/lastpayout.json" #edit /path/to/your/P2Pool to match your P2Pool install folder where /data/local (api folder) is located
-logfile="/path/to/your/P2Pool/p2pool.log" #edit /path/to/your/P2Pool to match your P2Pool install folder where p2pool.log is located.
+p2pool_log="/path/to/your/P2Pool/p2pool.log" #edit /path/to/your/P2Pool to match your P2Pool install folder where p2pool.log is located.
+logfile="/path/to/your/P2Pool/data/local/lastpayout.json" #edit /path/to/your/P2Pool to match your P2Pool install folder where /data/local (api folder) is located
 
 p2poolio() {
-    local log_path="$1"
-    local starttime=$(date +%s)
+    local path="$1"
+    local linelimit=20
+    local payout_found=false
+    local payout_amount=""
+    local payout_block=""
+    local payout_timestamp=""
 
-    if [[ ! -f "$log_path" ]]; then
-        echo '{"error": "Log file not found"}'
+    if [[ ! -f "$path" ]]; then
+        echo '{"error":"Log file not found"}'
         return
     fi
 
-    declare -a lines=()
-    local payout='{}'
+    mapfile -t all_lines < <(tac "$path")
 
-    # Read last 20 lines in reverse order and parse
-    mapfile -t raw_lines < <(tac "$log_path" | head -n 20)
+    for line in "${all_lines[@]}"; do
+        if (( linelimit-- <= 0 )); then
+            break
+        fi
 
-    for line in "${raw_lines[@]}"; do
-        line="${line//$'\n'/}" # remove newlines just in case
-        while [[ "$line" == *"  "* ]]; do
+        # Normalize spacing
+        while [[ "$line" =~ "  " ]]; do
             line="${line//  / }"
         done
 
-        # Split line into parts: type, date, time, module, rest
-        read -r type date time module rest <<<"$line"
-        # Only process lines with valid tags
-        case "$type" in
-            INFO|WARN|ERROR|FATAL|DEBUG|TRACE|NOTICE) ;;
-            *) continue ;;
-        esac
-
-        # Parse timestamp to epoch
-        ts_str="$date $time"
-        # Remove fractional seconds for parsing
-        ts_str="${ts_str%.*}"
-        timestamp=$(date -d "$ts_str" +%s 2>/dev/null)
-        if [[ -z "$timestamp" ]]; then
-            timestamp=0
+        type=$(echo "$line" | cut -d' ' -f1)
+        possibleTags=("INFO" "WARN" "ERROR" "FATAL" "DEBUG" "TRACE" "NOTICE")
+        if [[ ! " ${possibleTags[*]} " =~ " $type " ]]; then
+            continue
         fi
 
-        line_lc="${line,,}" # lowercase line
+        timestamp_str=$(echo "$line" | awk '{print $2" "$3}' | cut -d'.' -f1)
+        timestamp_epoch=$(date -d "$timestamp_str" +%s 2>/dev/null)
+        [[ $? -ne 0 ]] && continue
 
-        payout_data='{"payout": false}'
+        content=$(echo "$line" | cut -d' ' -f5-)
+        lc_content=$(echo "$content" | tr '[:upper:]' '[:lower:]')
 
-        if [[ "$line_lc" == *"your wallet"* && "$line_lc" == *"got a payout of"* && "$line_lc" == *"in block"* ]]; then
-            amount=$(echo "$line" | grep -oP 'got a payout of \K[\d\.]+')
-            block=$(echo "$line" | grep -oP 'block \K\d+')
-            payout_data="{\"amount\": \"$amount\", \"timestamp\": $timestamp, \"block\": $block}"
-            payout="$payout_data"
+        if [[ "$lc_content" == *"your wallet"* && "$lc_content" == *"got a payout of"* && "$lc_content" == *"in block"* ]]; then
+            payout_found=true
+            payout_amount=$(echo "$content" | grep -oP 'got a payout of \K[0-9.]+' || echo "")
+            payout_block=$(echo "$content" | grep -oP 'block \K[0-9]+' || echo "")
+            payout_timestamp="$timestamp_epoch"
+            break
         fi
-
-        # Compose JSON line object
-        content=$(echo "$line" | jq -Rs .)
-        line_json=$(jq -n \
-            --arg type "$type" \
-            --argjson timestamp "$timestamp" \
-            --arg module "$module" \
-            --argjson payout "$payout_data" \
-            --arg content "$content" \
-            '{type: $type, timestamp: $timestamp, module: $module, payout: $payout, content: $content}')
-
-        lines+=("$line_json")
     done
 
-    exectime=$(echo "$(date +%s.%N) - $starttime" | bc)
-
-    # Build final JSON output
-    jq -n \
-      --argjson payout "$payout" \
-      --argjson exectime "$exectime" \
-      --argjson lines "$(printf '%s\n' "${lines[@]}" | jq -s '.')" \
-      '{payout: $payout, exectime: $exectime, lines: $lines}'
+    if $payout_found && [[ -n "$payout_amount" && -n "$payout_block" && -n "$payout_timestamp" ]]; then
+        echo "{\"payout\":{\"amount\":\"$payout_amount\",\"block\":$payout_block,\"timestamp\":$payout_timestamp}}"
+    else
+        echo '{"payout":{}}'
+    fi
 }
 
 while true; do
-    echo "⏳ Running payout parsing subroutine..."
-    raw_output=$(p2poolio "$logfile")
+    echo "⏳ Running payout parser function..."
+    raw_output=$(p2poolio "$p2pool_log")
 
     if echo "$raw_output" | jq -e . >/dev/null 2>&1; then
         payout_present=$(echo "$raw_output" | jq '.payout | length > 0')
@@ -85,11 +67,9 @@ while true; do
         if [ "$payout_present" = "true" ]; then
             new_block=$(echo "$raw_output" | jq '.payout.block')
 
-            if [ -f "$file" ]; then
-                current_log=$(cat "$file")
-                if [ -z "$current_log" ]; then
-                    current_log="[]"
-                fi
+            if [ -f "$logfile" ]; then
+                current_log=$(cat "$logfile")
+                [ -z "$current_log" ] && current_log="[]"
             else
                 current_log="[]"
             fi
@@ -104,19 +84,17 @@ while true; do
             if [ "$block_exists" = "true" ]; then
                 echo "ℹ️ Payout block $new_block already logged, skipping."
             else
-                updated_log=$(jq --argjson new_entry "$raw_output" '
-                    [$new_entry] + . | .[:10]
-                ' <<< "$current_log")
+                updated_log=$(jq --argjson new_entry "$raw_output" '[$new_entry] + . | .[:10]' <<< "$current_log")
 
                 echo "DEBUG: Resulting updated log:"
                 echo "$updated_log"
 
                 if echo "$updated_log" | jq -e . >/dev/null 2>&1 && [ -n "$updated_log" ]; then
-                    if touch "$file" 2>/dev/null; then
-                        echo "$updated_log" > "$file"
+                    if touch "$logfile" 2>/dev/null; then
+                        echo "$updated_log" > "$logfile"
                         echo "✅ Logged structured payout block $new_block."
                     else
-                        echo "❌ Cannot write to file $file. Check permissions."
+                        echo "❌ Cannot write to file $logfile. Check permissions."
                     fi
                 else
                     echo "❌ Failed to generate valid updated log JSON."
@@ -126,7 +104,7 @@ while true; do
             echo "⚠️ No payout found in output, skipping logging."
         fi
     else
-        echo "⚠️ Invalid JSON output from subroutine, skipping..."
+        echo "⚠️ Invalid JSON output from payout parser, skipping..."
     fi
 
     echo "⏳ Sleeping for 2 minutes..."
