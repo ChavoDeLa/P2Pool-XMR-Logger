@@ -1,6 +1,6 @@
-# P2Pool-XMR-Loggers
+**# P2Pool-XMR-Loggers**
 
-What?!?
+**What?!?**
 
   A small suite of bash scripts to extend the available JSON data localed in /p2pool/data/local.
   
@@ -13,12 +13,12 @@ What?!?
     status.sh  
   3. Sends "status" to the p2pool session to push outputs to the log, then scrape p2pool.log for the entire output of the "status" command every 5 minutes, structure into json, then save into a json file for further use located in the data api folder, with debug feedback.  
 
-Why?!?
+**Why?!?**
 
   P2Pool data api files miss some stuff that I wanted (uncle positions, share positions, share count, etc) and i wanted the info into JSON format, reported regularly for use in Node-Red.
 
 
-What about the tari script?!?
+**What about the tari script?!?**
 
   The tari suite's minotari-node has a memory leak, and will gobble up swap and ram and then either crash Linux, or get killed by the OOM manager at length without notice.  This script simply kills any existing processes, restarts them in new terminals, and loops every 4 hours to dump the process memory and prevent whole system crashes or loss of node connectivity.
 
