@@ -13,8 +13,19 @@
     status.sh  
   3. Sends "status" to the p2pool session to push outputs to the log, then scrape p2pool.log for the entire output of the "status" command every 5 minutes, structure into json, then save into a json file for further use located in the data api folder, with debug feedback.  Update relevant absolute paths at the top, then run.
 
+Example Output of lastpayout.json (actually holds last 10 payouts, one payout shown below in an array of (1) at index (0):
 
-reminders:
+    [
+      {
+        "payout": {
+          "amount": "0.003784168055",
+          "block": 3416010,
+          "timestamp": 1747784540
+        }
+      }
+      ]
+      
+Reminders:
 - be sure to make your .sh files executable in linux
 - in your P2Pool/data/local folder, in a terminal run " python3 -m http.server 9000" to open up an http server on port 9000, so that you can access files like this:
 
