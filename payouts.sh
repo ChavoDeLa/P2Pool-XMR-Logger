@@ -5,7 +5,7 @@ logfile="/path/to/your/P2Pool/data/local/lastpayout.json" #edit /path/to/your/P2
 
 p2poolio() {
     local path="$1"
-    local linelimit=20
+    local linelimit=500
     local payout_found=false
     local payout_amount=""
     local payout_block=""
