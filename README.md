@@ -4,7 +4,8 @@ Prerequisites:
 
   -must have tmux installed
      
-  -running p2pool pre-4.6 and merge mining, or running p2pool 4.6+ WITH LOGLEVEL 1 in either case
+  -running p2pool pre-4.6 and merge mining, or running p2pool 4.6+ WITH LOGLEVEL 1 in either case 
+  ( so there is a merge mining area to find to stop parsing, and so that the logs arent too verbose and something gets missed)
      
   -can execute bash scripts in your environment
  
